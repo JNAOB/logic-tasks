@@ -23,7 +23,7 @@ unused01 = MinMaxConfig
     , minClauseAmount = 3
     , maxClauseAmount = 3
     }
-  , percentTrueEntries = Just (50, 70)
+  , percentTrueEntries = (50, 70)
   , extraText = Nothing
   , printSolution = True
   , offerUnicodeInput = False
@@ -42,7 +42,7 @@ unused02 = MinMaxConfig
     , minClauseAmount = 3
     , maxClauseAmount = 4
     }
-  , percentTrueEntries = Just (50, 70)
+  , percentTrueEntries = (50, 70)
   , extraText = Nothing
   , printSolution = True
   , offerUnicodeInput = False

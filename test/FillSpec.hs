@@ -4,7 +4,7 @@ module FillSpec where
 
 -- jscpd:ignore-start
 import Test.Hspec
-import Test.QuickCheck (forAll, Gen, choose, elements, suchThat, sublistOf)
+import Test.QuickCheck (forAll, Gen, choose, suchThat, sublistOf)
 import Control.OutputCapable.Blocks (LangM, Rated)
 import Config (
   dFillConf,
@@ -17,11 +17,11 @@ import Config (
   dNormalFormConf
  )
 import LogicTasks.Semantics.Fill (verifyQuiz, genFillInst, verifyStatic, partialGrade, completeGrade, description)
-import Data.Maybe (fromMaybe)
+-- import Data.Maybe (fromMaybe)
 import SynTreeSpec (validBoundsSynTreeConfig)
 import Formula.Types (Table(getEntries), getTable, lengthBound, TruthValue (TruthValue))
 import Tasks.SynTree.Config (SynTreeConfig(..))
-import Util (withRatio, checkBaseConf, checkNormalFormConfig)
+import Util (withRatio, checkBaseConf, checkNormalFormConfig, validBoundsPercentPosLiteral)
 import LogicTasks.Util (formulaDependsOnAllAtoms)
 import TestHelpers (doesNotRefuse)
 -- jscpd:ignore-end
@@ -63,9 +63,10 @@ validBoundsFillConfig = do
             minAmountOfUniqueAtoms == fromIntegral (length availableAtoms)
 
   percentageOfGaps <- choose (1, 100)
-  percentTrueEntriesLow' <- choose (0, 90)
-  percentTrueEntriesHigh' <- choose (percentTrueEntriesLow', 100) `suchThat` (/= percentTrueEntriesLow')
-  percentTrueEntries <- elements [Just (percentTrueEntriesLow', percentTrueEntriesHigh'), Nothing]
+  -- percentTrueEntriesLow' <- choose (0, 90)
+  -- percentTrueEntriesHigh' <- choose (percentTrueEntriesLow', 100) `suchThat` (/= percentTrueEntriesLow')
+  -- percentTrueEntries <- elements [Just (percentTrueEntriesLow', percentTrueEntriesHigh'), Nothing]
+  percentTrueEntries <- case formulaConfig of FormulaArbitrary x -> validBoundsPercentPosLiteral (2 ^ length (availableAtoms x))
 
   pure $ FillConfig {
       formulaConfig
@@ -114,7 +115,7 @@ spec = do
     it "should respect percentTrueEntries" $
       forAll validBoundsFillConfig $ \fillConfig@FillConfig{..} ->
         forAll (genFillInst fillConfig) $ \FillInst{..} ->
-          withRatio (fromMaybe (0, 100) percentTrueEntries) formula
+          withRatio (percentTrueEntries) formula
     it "the generated instance should pass verifyStatic" $
       forAll validBoundsFillConfig $ \fillConfig -> do
         forAll (genFillInst fillConfig) $ \fillInst ->

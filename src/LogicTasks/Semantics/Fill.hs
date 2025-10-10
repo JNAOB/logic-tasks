@@ -21,7 +21,7 @@ import Control.OutputCapable.Blocks (
   translations,
   Rated, reRefuse,
   )
-import Data.Maybe (fromMaybe)
+-- import Data.Maybe (fromMaybe)
 import Test.QuickCheck(Gen, suchThat)
 
 import Config ( FillConfig(..), FillInst(..), FormulaInst (..), FormulaConfig (..))
@@ -48,7 +48,7 @@ import Data.Foldable.Extra (notNull)
 
 genFillInst :: FillConfig -> Gen FillInst
 genFillInst FillConfig{..} = do
-    let percentTrueEntries' = fromMaybe (0,100) percentTrueEntries
+    let percentTrueEntries' = percentTrueEntries
 
     formula <- flip suchThat formulaDependsOnAllAtoms $ case formulaConfig of
       (FormulaArbitrary syntaxTreeConfig) ->
@@ -144,7 +144,7 @@ verifyQuiz FillConfig{..}
 
     | otherwise = checkTruthValueRangeAndFormulaConf range formulaConfig
   where
-    range = fromMaybe (0,100) percentTrueEntries
+    range = percentTrueEntries
 
 
 

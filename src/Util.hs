@@ -16,12 +16,12 @@ import Control.OutputCapable.Blocks (
   )
 import Control.Monad (when)
 import Data.List (delete)
-import Test.QuickCheck(Gen, elements, suchThat)
+import Test.QuickCheck(Gen, elements, suchThat, choose)
 
 import Config (BaseConfig(..), NormalFormConfig(..), FormulaConfig (..), FormulaInst (..))
 import Formula.Types (Formula, getTable, lengthBound)
 import Formula.Table (readEntries)
-import Tasks.SynTree.Config (SynTreeConfig, checkSynTreeConfig)
+import Tasks.SynTree.Config (SynTreeConfig(..), checkSynTreeConfig)
 import Formula.Util (cnfDependsOnAllAtomics, dnfDependsOnAllAtomics)
 import Trees.Helpers (synTreeDependsOnAllAtomics)
 
@@ -81,8 +81,8 @@ withRatio (lower,upper) form =
 
 
 
-checkTruthValueRange :: OutputCapable m => (Int, Int) -> LangM m
-checkTruthValueRange (low,high)
+checkTruthValueRange :: OutputCapable m => (Int, Int) -> Int -> LangM m
+checkTruthValueRange (low,high) total
     | isOutside 0 100 low || isOutside 0 100 high =
         refuse $ indent $ translate $ do
           german "Die Beschränkung der Wahr-Einträge liegt nicht zwischen 0 und 100 Prozent."
@@ -92,6 +92,11 @@ checkTruthValueRange (low,high)
         refuse $ indent $ translate $ do
           german "Die Beschränkung der Wahr-Einträge liefert keine gültige Reichweite."
           english "The given restriction on true entries are not a valid range."
+
+    | checkForSmallRange low high total =
+        refuse $ indent $ translate $ do
+          german "Die Beschränkung der Wahr-Einträge sollte ein gewissen Spielraum zulassen."
+          english "The given restriction on true entries should allow for some flexibility."
 
     | low == high =
         refuse $ indent $ translate $ do
@@ -171,17 +176,25 @@ checkNormalFormConfig NormalFormConfig {..}
 
 checkTruthValueRangeAndSynTreeConf :: OutputCapable m => (Int,Int) -> SynTreeConfig -> LangM m
 checkTruthValueRangeAndSynTreeConf range synTreeConfig = do
-  checkTruthValueRange range
+  checkTruthValueRange range (2 ^ length (availableAtoms synTreeConfig))
   checkSynTreeConfig synTreeConfig
   pure ()
 
 checkTruthValueRangeAndFormulaConf :: OutputCapable m => (Int, Int) -> FormulaConfig -> LangM m
 checkTruthValueRangeAndFormulaConf range formulaConf = do
-  checkTruthValueRange range
   case formulaConf of
-    (FormulaCnf cnfCfg) -> checkNormalFormConfig cnfCfg
-    (FormulaDnf dnfCfg) -> checkNormalFormConfig dnfCfg
-    (FormulaArbitrary syntaxTreeConfig) -> checkSynTreeConfig syntaxTreeConfig
+    (FormulaCnf cnfCfg) -> do
+      checkTruthValueRange range (2 ^ length (usedAtoms (baseConf cnfCfg)))
+      checkNormalFormConfig cnfCfg
+      pure ()
+    (FormulaDnf dnfCfg) -> do
+      checkTruthValueRange range (2 ^ length (usedAtoms (baseConf dnfCfg)))
+      checkNormalFormConfig dnfCfg
+      pure ()
+    (FormulaArbitrary syntaxTreeConfig) -> do
+      checkTruthValueRange range (2 ^ length (availableAtoms syntaxTreeConfig))
+      checkSynTreeConfig syntaxTreeConfig
+      pure ()
   pure ()
 
 vectorOfUniqueBy :: Int -> (a -> a -> Bool) -> Gen a -> Gen [a]
@@ -195,3 +208,17 @@ formulaDependsOnAllAtoms :: FormulaInst -> Bool
 formulaDependsOnAllAtoms (InstCnf cnf) = cnfDependsOnAllAtomics cnf
 formulaDependsOnAllAtoms (InstDnf dnf) = dnfDependsOnAllAtomics dnf
 formulaDependsOnAllAtoms (InstArbitrary tree) = synTreeDependsOnAllAtomics tree
+
+checkForSmallRange :: Int -> Int -> Int -> Bool
+checkForSmallRange low high total = ceiling (fromIntegral (low * total) / (100 :: Double)) >=
+                                  (high * total) `div` 10
+
+validBoundsPercentPosLiteral :: Int -> Gen (Int, Int)
+validBoundsPercentPosLiteral numLiterals = do
+    lowerNumberBarrier <- choose (0, numLiterals-1)
+    let lowPercentBarrier = floor (((fromIntegral lowerNumberBarrier / fromIntegral numLiterals) * 100) :: Double)
+    let highPercentBarrier = ceiling (((fromIntegral (lowerNumberBarrier + 1) / fromIntegral numLiterals) * 100) :: Double)
+
+    percentPosLiteralsLow <- choose (0, lowPercentBarrier)
+    percentPosLiteralsHigh <- choose (highPercentBarrier, 100)
+    pure (percentPosLiteralsLow,percentPosLiteralsHigh)

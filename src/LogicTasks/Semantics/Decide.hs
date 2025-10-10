@@ -36,7 +36,7 @@ import Util (isOutside, remove, withRatio, checkTruthValueRangeAndFormulaConf, f
 import LogicTasks.Helpers (extra, reject)
 import Control.Monad (when)
 import Trees.Generate (genSynTree)
-import Data.Maybe (fromMaybe)
+-- import Data.Maybe (fromMaybe)
 import LogicTasks.Util (genCnf', genDnf', displayFormula, usesAllAtoms, isEmptyFormula)
 import Control.Applicative (Alternative)
 import GHC.Real ((%))
@@ -45,7 +45,7 @@ import GHC.Real ((%))
 
 genDecideInst :: DecideConfig -> Gen DecideInst
 genDecideInst DecideConfig{..} = do
-    let percentTrueEntries' = fromMaybe (0, 100) percentTrueEntries
+    let percentTrueEntries' = percentTrueEntries
     -- jscpd:ignore-start
     formula <- flip suchThat formulaDependsOnAllAtoms $ case formulaConfig of
       (FormulaArbitrary syntaxTreeConfig) ->
@@ -166,7 +166,7 @@ verifyQuiz DecideConfig{..}
 
     | otherwise = checkTruthValueRangeAndFormulaConf range formulaConfig
   where
-    range = fromMaybe (0,100) percentTrueEntries
+    range = percentTrueEntries
 
 
 

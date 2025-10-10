@@ -27,7 +27,7 @@ import Formula.Util (isSemanticEqual)
 import Formula.Types (availableLetter, getTable, Formula (atomics))
 import Formula.Printing (showIndexedList)
 import LogicTasks.Helpers (extra)
-import Data.Maybe (fromJust, fromMaybe)
+import Data.Maybe (fromJust)
 import Trees.Generate (genSynTree)
 import Tasks.SynTree.Config (SynTreeConfig (..))
 import Util (withRatio, vectorOfUniqueBy, checkTruthValueRangeAndFormulaConf, formulaDependsOnAllAtoms)
@@ -36,7 +36,7 @@ import LogicTasks.Util (genCnf', genDnf', displayFormula, usesAllAtoms, isEmptyF
 
 genPickInst :: PickConfig -> Gen PickInst
 genPickInst PickConfig{..} = do
-  let percentTrueEntries' = fromMaybe (0,100) percentTrueEntries
+  let percentTrueEntries' = percentTrueEntries
   formulas <- vectorOfUniqueBy
     amountOfOptions
     isSemanticEqual
@@ -138,7 +138,7 @@ verifyQuiz PickConfig{..}
 
     | otherwise = checkTruthValueRangeAndFormulaConf range formulaConfig
   where
-    range@(rangeL, rangeH) = fromMaybe (0,100) percentTrueEntries
+    range@(rangeL, rangeH) = percentTrueEntries
     hasMinUniqueAtoms x (FormulaArbitrary syntaxTreeConfig) = minAmountOfUniqueAtoms syntaxTreeConfig >= x
     hasMinUniqueAtoms _ _ = True
     doesOvershootOptions (FormulaArbitrary syntaxTreeConfig)

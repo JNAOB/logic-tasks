@@ -18,7 +18,7 @@ import Control.OutputCapable.Blocks (
   translations,
   localise,
   )
-import Data.Maybe (fromMaybe)
+-- import Data.Maybe (fromMaybe)
 import Test.QuickCheck (Gen, suchThat)
 
 import Config (BaseConfig(..), NormalFormConfig(..), MinMaxConfig(..), MinInst(..))
@@ -42,7 +42,7 @@ genMinInst MinMaxConfig {normalFormConf = NormalFormConfig {baseConf = BaseConfi
     }
    where
      getDnf = genDnf (minClauseAmount, maxClauseAmount) (minClauseLength, maxClauseLength) usedAtoms True
-     dnfInRange = getDnf `suchThat` withRatio (fromMaybe (0,100) percentTrueEntries)
+     dnfInRange = getDnf `suchThat` withRatio (percentTrueEntries)
 
 
 

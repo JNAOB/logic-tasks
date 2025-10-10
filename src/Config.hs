@@ -294,7 +294,7 @@ dNormalFormConf = NormalFormConfig
 data PickConfig = PickConfig {
        formulaConfig :: FormulaConfig
      , amountOfOptions :: Int
-     , percentTrueEntries :: Maybe (Int,Int)
+     , percentTrueEntries :: (Int,Int)
      , printSolution :: Bool
      , extraText :: Maybe (Map Language String)
      }
@@ -304,7 +304,7 @@ dPickConf :: PickConfig
 dPickConf = PickConfig
     { formulaConfig = FormulaCnf dNormalFormConf
     , amountOfOptions = 3
-    , percentTrueEntries = Just (30,70)
+    , percentTrueEntries = (30,70)
     , printSolution = False
     , extraText = Nothing
     }
@@ -314,7 +314,7 @@ dPickConf = PickConfig
 data FillConfig = FillConfig {
       formulaConfig :: FormulaConfig
     , percentageOfGaps :: Int
-    , percentTrueEntries :: Maybe (Int,Int)
+    , percentTrueEntries :: (Int,Int)
     , printSolution :: Bool
     , extraText :: Maybe (Map Language String)
     }
@@ -324,7 +324,7 @@ dFillConf :: FillConfig
 dFillConf = FillConfig
     { formulaConfig = FormulaCnf dNormalFormConf
     , percentageOfGaps = 40
-    , percentTrueEntries = Just (30,70)
+    , percentTrueEntries = (30,70)
     , printSolution = False
     , extraText = Nothing
     }
@@ -333,7 +333,7 @@ dFillConf = FillConfig
 
 data MinMaxConfig = MinMaxConfig {
       normalFormConf :: NormalFormConfig
-    , percentTrueEntries :: Maybe (Int,Int)
+    , percentTrueEntries :: (Int,Int)
     , printSolution :: Bool
     , extraText :: Maybe (Map Language String)
     , offerUnicodeInput :: Bool
@@ -343,7 +343,7 @@ data MinMaxConfig = MinMaxConfig {
 dMinMaxConf :: MinMaxConfig
 dMinMaxConf = MinMaxConfig
     { normalFormConf = dNormalFormConf
-    , percentTrueEntries = Just (50,70)
+    , percentTrueEntries = (50,70)
     , printSolution = False
     , extraText = Nothing
     , offerUnicodeInput = False
@@ -354,7 +354,7 @@ dMinMaxConf = MinMaxConfig
 data DecideConfig = DecideConfig {
       formulaConfig :: FormulaConfig
     , percentageOfChanged :: Int
-    , percentTrueEntries :: Maybe (Int,Int)
+    , percentTrueEntries :: (Int,Int)
     , printSolution :: Bool
     , extraText :: Maybe (Map Language String)
     }
@@ -364,7 +364,7 @@ dDecideConf :: DecideConfig
 dDecideConf = DecideConfig
     { formulaConfig = FormulaCnf dNormalFormConf
     , percentageOfChanged = 40
-    , percentTrueEntries = Just (30,70)
+    , percentTrueEntries = (30,70)
     , printSolution = False
     , extraText = Nothing
     }

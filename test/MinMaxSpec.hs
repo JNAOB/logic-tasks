@@ -39,7 +39,7 @@ validBoundsMinMaxConfig = do
       }
     -- Restrictions on this lead to infinite loops.
     -- A satisfying formula is frequently not found, even with large intervals.
-    , percentTrueEntries = Nothing
+    , percentTrueEntries = (0,100)
     , printSolution
     , extraText = Nothing
     , offerUnicodeInput

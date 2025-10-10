@@ -24,7 +24,7 @@ task08 = PickConfig
                   , maxClauseAmount = 2
                   })
   , amountOfOptions = 3
-  , percentTrueEntries = Nothing
+  , percentTrueEntries = (0,100)
   , extraText = Nothing
   , printSolution = True
   }
@@ -43,7 +43,7 @@ task11 = PickConfig
                    , maxClauseAmount = 4
                    })
   , amountOfOptions = 4
-  , percentTrueEntries = Just (30,70)
+  , percentTrueEntries = (30,70)
   , printSolution = True
   , extraText = Nothing
   }
