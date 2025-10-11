@@ -31,7 +31,7 @@ import Data.Maybe (fromJust)
 import Trees.Generate (genSynTree)
 import Tasks.SynTree.Config (SynTreeConfig (..))
 import Util (withRatio, vectorOfUniqueBy, checkTruthValueRangeAndFormulaConf, formulaDependsOnAllAtoms)
-import LogicTasks.Util (genCnf', genDnf', displayFormula, usesAllAtoms, isEmptyFormula)
+import LogicTasks.Util (genCnf', genDnf', displayFormula, usesAllAtoms, isEmptyFormula, checkForSmallRange)
 
 
 genPickInst :: PickConfig -> Gen PickInst
@@ -131,10 +131,10 @@ verifyQuiz PickConfig{..}
           german "Bei dieser Aufgabe müssen alle verfügbaren Atome verwendet werden."
           english "All available atoms must be used for this task."
 
-    | rangeH - rangeL < 30 =
+    | checkForSmallRange rangeL rangeH (2 ^ minAmountOfUniqueAtoms syntaxTreeConfig) =
         refuse $ indent $ translate $ do
-          german "Die Beschränkung der Wahr-Einträge sollte eine Reichweite von 30 nicht unterschreiten."
-          english "The given restriction on True entries should not fall below a range of 30."
+          german "Die Beschränkung der Wahr-Einträge sollte mindestens 2 Ausprägungen erlauben."
+          english "The given restriction on True entries should allow at least 2 values."
 
     | otherwise = checkTruthValueRangeAndFormulaConf range formulaConfig
   where
