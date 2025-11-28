@@ -33,5 +33,5 @@ doesNotRefuseIO thing = do
 
 genSublistOf :: (Int, Int) -> [a] -> Gen [a]
 genSublistOf (minLength, maxLength) xs = do
-  lengthAtoms <- length <$> sublistOf [minLength .. maxLength]
-  take lengthAtoms <$> shuffle xs
+  lengthAtoms <- length <$> sublistOf [minLength .. maxLength - 1]
+  take (minLength + lengthAtoms) <$> shuffle xs
