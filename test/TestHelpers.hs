@@ -12,7 +12,7 @@ import Control.OutputCapable.Blocks.Generic (evalLangM, RunnableOutputCapable (R
 import Control.Monad.Identity (Identity(runIdentity))
 import Data.Maybe (isJust)
 import Control.OutputCapable.Blocks (Language, LangM')
-import Test.QuickCheck (Gen, shuffle, sublistOf)
+import Test.QuickCheck (Gen, shuffle, chooseInt)
 
 deleteBrackets :: String  -> String
 deleteBrackets = filter (`notElem` "()")
@@ -33,5 +33,5 @@ doesNotRefuseIO thing = do
 
 genSublistOf :: (Int, Int) -> [a] -> Gen [a]
 genSublistOf (minLength, maxLength) xs = do
-  lengthAtoms <- length <$> sublistOf [minLength .. maxLength - 1]
-  take (minLength + lengthAtoms) <$> shuffle xs
+  lengthAtoms <- chooseInt (minLength, min maxLength (length xs))
+  take lengthAtoms <$> shuffle xs
