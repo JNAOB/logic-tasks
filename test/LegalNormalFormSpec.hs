@@ -72,7 +72,7 @@ validBoundsLegalNormalFormConfig = do
 
 invalidBoundsLegalCNF :: Gen LegalNormalFormConfig
 invalidBoundsLegalCNF = do
-    usedAtoms <- genSublistOf (5, 10) ['A' .. 'Z']
+    usedAtoms <- genSublistOf (1, 10) ['A' .. 'Z']
     maxClauseLength <- chooseInt (1, 2 * length usedAtoms)
     minClauseLength <- chooseInt (maxClauseLength, 100)
     let clauses = product (take maxClauseLength (reverse [1 .. (2 * length usedAtoms)]))

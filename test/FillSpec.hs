@@ -29,8 +29,8 @@ import TestHelpers (doesNotRefuse, genSublistOf)
 validBoundsBaseConfig :: Gen BaseConfig
 validBoundsBaseConfig = do
   minClauseLength <- chooseInt (1, 5)
-  maxClauseLength <- chooseInt (max 2 minClauseLength, 10)
-  usedAtoms <- genSublistOf (max 15 maxClauseLength, 26) ['A' .. 'Z']
+  maxClauseLength <- chooseInt (2, 10) `suchThat` \x -> minClauseLength <= x
+  usedAtoms <- genSublistOf (maxClauseLength, 26) ['A' .. 'Z']
   pure $ BaseConfig {
     minClauseLength
   , maxClauseLength
