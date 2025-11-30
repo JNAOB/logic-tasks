@@ -12,7 +12,8 @@ import Control.OutputCapable.Blocks.Generic (evalLangM, RunnableOutputCapable (R
 import Control.Monad.Identity (Identity(runIdentity))
 import Data.Maybe (isJust)
 import Control.OutputCapable.Blocks (Language, LangM')
-import Test.QuickCheck (Gen, sublistOf, suchThat)
+import Test.QuickCheck (Gen, frequency, shuffle)
+import Numeric.SpecFunctions as Math (choose)
 
 deleteBrackets :: String  -> String
 deleteBrackets = filter (`notElem` "()")
@@ -33,4 +34,17 @@ doesNotRefuseIO thing = do
 
 genSublistOf :: (Int, Int) -> [a] -> Gen [a]
 genSublistOf (minLength, maxLength) xs = do
-  sublistOf xs `suchThat` \ys -> let len = length ys in len >= minLength && len <= maxLength
+  lengthAtoms <- genLengthBinomial (minLength, maxLength) (length xs)
+  take lengthAtoms <$> shuffle xs
+
+genLengthBinomial :: (Int, Int) -> Int -> Gen Int
+genLengthBinomial (minLength, maxLength) n =
+  let lo = max minLength 0
+      hi = min maxLength n
+      ks = [lo .. hi]
+  in if null ks
+     then error "genLengthBinomial: no valid lengths"
+     else frequency
+            [ (floor (Math.choose n k), pure k)
+            | k <- ks
+            ]
