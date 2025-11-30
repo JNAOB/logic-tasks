@@ -24,15 +24,13 @@ validBoundsClause = do
 
 validBoundsNormalFormParams :: Gen ((Int,Int),(Int,Int),[Char])
 validBoundsNormalFormParams = do
-    ((minLen,maxLen),chars) <- validBoundsClause
-    let lowerBound = (length chars `div` minLen) + 1
-    let upperBound = min 50 (lengthBound (length chars) maxLen)
-    minNum <- chooseInt (lowerBound, upperBound)
-    if minNum > lengthBound (length chars) minLen
-      then validBoundsNormalFormParams
-      else do
-        maxNum <- chooseInt (minNum,upperBound)
-        pure ((minNum,maxNum),(minLen,maxLen),chars)
+    ((minLen,maxLen),chars) <- validBoundsClause `suchThat` ((1 /=) . fst . fst)
+    let lengthChars = length chars
+    let lowerBound = (lengthChars `div` minLen) + 1
+    let upperBound = min 50 (lengthBound lengthChars maxLen)
+    minNum <- chooseInt (lowerBound, min (lengthBound lengthChars minLen) upperBound)
+    maxNum <- chooseInt (minNum,upperBound)
+    pure ((minNum,maxNum),(minLen,maxLen),chars)
 
 spec :: Spec
 spec = do

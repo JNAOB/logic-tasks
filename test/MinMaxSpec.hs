@@ -9,34 +9,23 @@ import Test.QuickCheck (Gen, chooseAny, forAll)
 import qualified LogicTasks.Semantics.Max as Max (verifyQuiz, verifyStatic, genMaxInst, description, partialGrade', completeGrade')
 import qualified LogicTasks.Semantics.Min as Min (verifyQuiz, verifyStatic, genMinInst, description, partialGrade', completeGrade')
 import Config (
-  BaseConfig(..),
-  NormalFormConfig(..),
   MinMaxConfig(..),
   dMinMaxConf,
   MaxInst (cnf),
   MinInst (dnf),
   )
-
-import FormulaSpec (validBoundsNormalFormParams)
+import FillSpec (validBoundsNormalFormConfig)
 import TestHelpers (doesNotRefuse)
 
 
 
 validBoundsMinMaxConfig :: Gen MinMaxConfig
 validBoundsMinMaxConfig = do
-  ((minClauseAmount,maxClauseAmount),(minClauseLength,maxClauseLength),usedAtoms) <- validBoundsNormalFormParams
+  normalFormConf <- validBoundsNormalFormConfig
   offerUnicodeInput <- chooseAny
   printSolution <- chooseAny
   pure $ MinMaxConfig
-    { normalFormConf = NormalFormConfig{
-          minClauseAmount,
-          maxClauseAmount,
-          baseConf = BaseConfig{
-              minClauseLength,
-              maxClauseLength,
-              usedAtoms
-          }
-      }
+    { normalFormConf = normalFormConf
     -- Restrictions on this lead to infinite loops.
     -- A satisfying formula is frequently not found, even with large intervals.
     , percentTrueEntries = Nothing
