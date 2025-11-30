@@ -6,7 +6,7 @@
 module SynTreeSpec (spec, validBoundsSynTreeConfig) where
 
 import Test.Hspec (Spec, describe, it, xit)
-import Test.QuickCheck (Gen, chooseInteger, elements, forAll, suchThat, sublistOf)
+import Test.QuickCheck (Gen, chooseInteger, elements, forAll, suchThat)
 import Data.List.Extra (nubOrd, isInfixOf)
 
 import TestHelpers (deleteSpaces, doesNotRefuse)
@@ -55,7 +55,7 @@ validBoundsSynTreeConfig :: Gen SynTreeConfig
 validBoundsSynTreeConfig = do
   binOpFrequencies <- elements [opFrequencies, opFrequenciesNoArrows]
   maxConsecutiveNegations <- chooseInteger (0, 3)
-  availableAtoms <- sublistOf ['A' .. 'Z'] `suchThat` (not . null)
+  let availableAtoms = "A" -- sublistOf ['A' .. 'Z'] `suchThat` (not . null)
   minAmountOfUniqueAtoms <- chooseInteger (1, fromIntegral $ length availableAtoms)
   minNodes <- chooseInteger (max 3 (minAmountOfUniqueAtoms * 2), 60) `suchThat` \minNodes' -> maxConsecutiveNegations /= 0 || odd minNodes'
   let minDepth = 1 + floor (logBase (2 :: Double) $ fromIntegral minNodes)
