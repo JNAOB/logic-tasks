@@ -6,7 +6,7 @@ module LogicTasks.Syntax.SimplestFormula where
 
 
 import Control.OutputCapable.Blocks (
-  GenericOutputCapable (indent, translatedCode),
+  GenericOutputCapable (translatedCode),
   LangM,
   OutputCapable,
   english,
@@ -20,7 +20,7 @@ import Control.OutputCapable.Blocks (
   translations,
   Rated,
   reRefuse,
-  printSolutionAndAssertMinimum
+  printSolutionAndAssertMinimum, collapsed
   )
 import Data.List (nub, sort)
 import Data.Maybe (isNothing, fromJust)
@@ -46,39 +46,53 @@ import Control.Applicative (Alternative)
 description :: OutputCapable m => SuperfluousBracketsInst -> LangM m
 description SuperfluousBracketsInst{..} = do
     instruct $ do
-      english "Consider the following propositional logic formula:"
-      german "Betrachten Sie die folgende aussagenlogische Formel:"
+      english "Remove all unnecessary pairs of brackets in the given formula."
+      german "Entfernen Sie alle unnötigen Klammer-Paare in der gegebenen Formel."
 
     focus stringWithSuperfluousBrackets
 
     instruct $ do
-      english "Since ∧ and ∨ are associative, it is not necessary to use brackets in subformulas with three or more atomic formulas and the same logical operators, for example in:"
-      german "Aufgrund der Assoziativität von ∧ und ∨ muss in Teilformeln mit drei oder mehr atomaren Formeln und den gleichen logischen Operatoren nicht geklammert werden, z.B. bei:"
+      english "Give your answer as a propositional logic formula again."
+      german "Geben Sie die Lösung wieder in Form einer aussagenlogischen Formel an."
 
-    focus "A ∧ B ∧ C"
+    collapsed False (do
+      english "Additional hints:"
+      german "Weitere Hinweise:")
+      (do
 
-    instruct $ do
-      english "Similarly, brackets are not necessary for one or more consecutive negations directly in front of an atomic formula, for example in:"
-      german "Genauso sind Klammern bei einer oder mehreren Negationen direkt vor einer atomaren Formel nicht nötig, z.B. bei"
+        paragraph $ do
+          translate $ do
+            english "For example, if (A ∨ B) is the given formula, then the following solution is correct:"
+            german "Ist z.B. (A ∨ B) die gegebene Formel, dann ist die folgende Lösung korrekt:"
+          translatedCode $ flip localise $ translations exampleCode
+          pure ()
 
-    focus "¬¬A"
+        paragraph $ translate $ do
+          german "Sie können dafür die ursprüngliche Formel in das Abgabefeld kopieren und unnötige Klammern entfernen, oder leer startend die folgenden Schreibweisen nutzen:"
+          english "You can copy the original formula into the submission field and remove unnecessary brackets, or start from scratch and use the following syntax:"
 
-    instruct $ do
-      english "Remove all unnecessary pairs of brackets in the given formula (regarding associativity not just concerning atomic formulas). Give your answer as a propositional logic formula."
-      german "Entfernen Sie alle unnötigen Klammer-Paare in der gegebenen Formel (hinsichtlich Assoziativität nicht nur atomare Formeln betreffend). Geben Sie die Lösung in Form einer aussagenlogischen Formel an."
+        basicOpKey unicodeAllowed
 
-    paragraph $ indent $ do
-      translate $ do
-        english "For example, if (A ∨ B) is the given formula, then the following solution is correct:"
-        german "Ist z.B. (A ∨ B) die gegebene Formel, dann ist die folgende Lösung korrekt:"
-      translatedCode $ flip localise $ translations exampleCode
-      pure ()
+        when showArrowOperators arrowsKey
 
-    paragraph $ translate $ do
-      german "Sie können dafür die ursprüngliche Formel in das Abgabefeld kopieren und unnötige Klammern entfernen, oder leer startend die folgenden Schreibweisen nutzen:"
-      english "You can copy the original formula into the submission field and remove unnecessary brackets, or start from scratch and use the following syntax:"
-    basicOpKey unicodeAllowed
-    when showArrowOperators arrowsKey
+        instruct $ do
+          english "Due to the associativity of ∧ and ∨, it is not necessary to use brackets in subformulas consisting of three or more atomic formulas connected by the same logical operator, for example in:"
+          german "Aufgrund der Assoziativität von ∧ und ∨ muss in Teilformeln, die aus drei oder mehr atomaren Formeln verknüpft mit dem gleichen logischen Operator bestehen, nicht geklammert werden, z.B. bei:"
+
+        focus "A ∧ B ∧ C"
+
+        instruct $ do
+          english "Similarly, brackets are not necessary for one or more consecutive negations directly in front of an atomic formula, for example in:"
+          german "Genauso sind Klammern bei einer oder mehreren Negationen direkt vor einer atomaren Formel nicht nötig, z.B. bei"
+
+        focus "¬¬A"
+
+        instruct $ do
+          english "Remove all unnecessary pairs of brackets in the given formula (regarding associativity not just concerning atomic formulas)."
+          german "Entfernen Sie alle unnötigen Klammer-Paare in der gegebenen Formel (hinsichtlich Assoziativität nicht nur atomare Formeln betreffend)."
+
+        pure ()
+      )
 
     extra addText
     pure ()

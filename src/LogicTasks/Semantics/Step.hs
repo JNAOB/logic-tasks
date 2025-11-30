@@ -68,6 +68,19 @@ description oneInput StepInst{..} = do
     german $ "Geben Sie das in dem Resolutionsschritt genutzte Literal (in positiver oder negativer Form) und das Ergebnis" ++ gerEnd
     english $ "Provide the literal (in positive or negative form) used for the step and the resolvent" ++ engEnd
 
+  when usesSetNotation $ paragraph $ do
+    translate $ do
+      german "Nutzen Sie zur Angabe der Resolvente die Mengenschreibweise! Ein Lösungsversuch könnte beispielsweise so aussehen: "
+      english "Specify the resolvent using set notation! A valid solution could look like this: "
+    indent $ translatedCode $ flip localise $ translations setExample
+    pure ()
+
+  unless usesSetNotation $ paragraph $ do
+    translate $ do
+      german "Nutzen Sie zur Angabe der Resolvente eine Formel! Ein Lösungsversuch könnte beispielsweise so aussehen: "
+      english "Specify the resolvent using a formula! A valid solution could look like this: "
+    indent $ translatedCode $ flip localise $ translations exampleCode
+    pure ()
 
   keyHeading
   negationKey unicodeAllowed
@@ -79,21 +92,6 @@ description oneInput StepInst{..} = do
       english "Non-empty clause:"
     code "{ ... }"
     pure ()
-
-  when usesSetNotation $ paragraph $ indent $ do
-    translate $ do
-      german "Nutzen Sie zur Angabe der Resolvente die Mengenschreibweise! Ein Lösungsversuch könnte beispielsweise so aussehen: "
-      english "Specify the resolvent using set notation! A valid solution could look like this: "
-    translatedCode $ flip localise $ translations setExample
-    pure ()
-
-  unless usesSetNotation $ paragraph $ indent $ do
-    translate $ do
-      german "Nutzen Sie zur Angabe der Resolvente eine Formel! Ein Lösungsversuch könnte beispielsweise so aussehen: "
-      english "Specify the resolvent using a formula! A valid solution could look like this: "
-    translatedCode $ flip localise $ translations exampleCode
-    pure ()
-
 
   extra addText
   pure ()
