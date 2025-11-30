@@ -41,8 +41,8 @@ genLengthBinomial :: (Int, Int) -> Int -> Gen Int
 genLengthBinomial (minLength, maxLength) n =
   chooseInt (lo, hi)
   where
-    hi = min maxLength n
-    lo = max minLength (min 10 hi)
+    lo = max minLength 0
+    hi = max lo (min 15 (min maxLength n))
   -- let lo = max minLength 0
   --     hi = min maxLength n
   --     ks = [lo .. hi]
