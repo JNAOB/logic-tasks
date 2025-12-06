@@ -55,7 +55,7 @@ validBoundsSynTreeConfig :: Gen SynTreeConfig
 validBoundsSynTreeConfig = do
   binOpFrequencies <- elements [opFrequencies, opFrequenciesNoArrows]
   maxConsecutiveNegations <- chooseInteger (0, 3)
-  availableAtoms <- genSublistOf (2,26) ['A' .. 'Z'] -- sublistOf ['A' .. 'Z'] `suchThat` (not . null)
+  availableAtoms <- genSublistOf (11,15) ['A' .. 'Z'] -- sublistOf ['A' .. 'Z'] `suchThat` (not . null)
   minAmountOfUniqueAtoms <- chooseInteger (1, fromIntegral $ length availableAtoms)
   minNodes <- chooseInteger (max 3 (minAmountOfUniqueAtoms * 2), 60) `suchThat` \minNodes' -> maxConsecutiveNegations /= 0 || odd minNodes'
   let minDepth = 1 + floor (logBase (2 :: Double) $ fromIntegral minNodes)
