@@ -125,12 +125,12 @@ spec = do
 
     describe "description" $ do
       it "should not reject - CNF" $
-        within timeout $ forAll validBoundsLegalNormalFormConfig $ \config ->
-          forAll (generateLegalCNFInst config) $ \inst ->
+        forAll validBoundsLegalNormalFormConfig $ \config ->
+          within timeout $ forAll (generateLegalCNFInst config) $ \inst ->
             doesNotRefuse (IllegalCnfs.description False inst :: LangM Maybe)
       it "should not reject - DNF" $
-        within timeout $ forAll validBoundsLegalNormalFormConfig $ \config ->
-          forAll (generateLegalDNFInst config) $ \inst ->
+        forAll validBoundsLegalNormalFormConfig $ \config ->
+          within timeout $ forAll (generateLegalDNFInst config) $ \inst ->
             doesNotRefuse (IllegalDnfs.description False inst :: LangM Maybe)
 
     describe "genIllegalCnfSynTree" $
@@ -171,24 +171,24 @@ spec = do
                   (judgeDnfSynTree . dnfToSynTree)
     describe "generateLegalCNFInst" $ do
         it "all of the formulas in the wrong serial should not be Cnf" $
-            within timeout $ forAll validBoundsLegalNormalFormConfig $ \config ->
-                forAll (generateLegalCNFInst config) $ \LegalNormalFormInst{..} ->
+            forAll validBoundsLegalNormalFormConfig $ \config ->
+                within timeout $ forAll (generateLegalCNFInst config) $ \LegalNormalFormInst{..} ->
                   let formulaStrings = map thd3 formulaInfos in
                   all (\x -> isLeft (cnfParse (formulaStrings !! (x - 1)))) [i | (i, info,_) <- formulaInfos, treeIsErroneous info]
         it "all of the formulas not in the wrong serial should be Cnf" $
-            within timeout $ forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
-                forAll (generateLegalCNFInst config) $ \LegalNormalFormInst{..} ->
+            forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
+                within timeout $ forAll (generateLegalCNFInst config) $ \LegalNormalFormInst{..} ->
                   let formulaStrings = map thd3 formulaInfos in
                   all
                     (\x -> isRight (cnfParse (formulaStrings !! (x - 1))))
                     ([1..formulas] \\ [i | (i, info,_) <- formulaInfos, treeIsErroneous info])
         it "should pass verifyInst" $
-            within timeout $ forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
-                forAll (generateLegalCNFInst config) $ \inst ->
+            forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
+                within timeout $ forAll (generateLegalCNFInst config) $ \inst ->
                   doesNotRefuse (IllegalCnfs.verifyInst inst :: LangM Maybe)
         it "should pass grading with correct answer" $
-          within timeout $ forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
-            forAll (generateLegalCNFInst config) $ \inst@LegalNormalFormInst{..} ->
+          forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
+            within timeout $ forAll (generateLegalCNFInst config) $ \inst@LegalNormalFormInst{..} ->
               doesNotRefuse (
                 IllegalCnfs.partialGrade
                   inst
@@ -200,24 +200,24 @@ spec = do
                 :: Rated Maybe)
     describe "generateLegalDNFInst" $ do
         it "all of the formulas in the wrong serial should not be Dnf" $
-            within timeout $ forAll validBoundsLegalNormalFormConfig $ \config ->
-                forAll (generateLegalDNFInst config) $ \LegalNormalFormInst{..} ->
+            forAll validBoundsLegalNormalFormConfig $ \config ->
+                within timeout $ forAll (generateLegalDNFInst config) $ \LegalNormalFormInst{..} ->
                   let formulaStrings = map thd3 formulaInfos in
                   all (\x -> isLeft (dnfParse (formulaStrings !! (x - 1)))) [i | (i, info,_) <- formulaInfos, treeIsErroneous info]
         it "all of the formulas not in the wrong serial should be Dnf" $
-            within timeout $ forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
-                forAll (generateLegalDNFInst config) $ \LegalNormalFormInst{..} ->
+            forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
+                within timeout $ forAll (generateLegalDNFInst config) $ \LegalNormalFormInst{..} ->
                   let formulaStrings = map thd3 formulaInfos in
                   all
                     (\x -> isRight (dnfParse (formulaStrings !! (x - 1))))
                     ([1..formulas] \\ [i | (i, info,_) <- formulaInfos, treeIsErroneous info])
         it "should pass verifyInst" $
-            within timeout $ forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
-                forAll (generateLegalDNFInst config) $ \inst ->
+            forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
+                within timeout $ forAll (generateLegalDNFInst config) $ \inst ->
                   doesNotRefuse (IllegalDnfs.verifyInst inst :: LangM Maybe)
         it "should pass grading with correct answer" $
-          within timeout $ forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
-            forAll (generateLegalDNFInst config) $ \inst@LegalNormalFormInst{..} ->
+          forAll validBoundsLegalNormalFormConfig $ \config@LegalNormalFormConfig{..} ->
+            within timeout $ forAll (generateLegalDNFInst config) $ \inst@LegalNormalFormInst{..} ->
               doesNotRefuse (
                 IllegalDnfs.partialGrade
                   inst

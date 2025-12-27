@@ -51,17 +51,17 @@ spec = do
         doesNotRefuse (verifyQuiz decideConfig :: LangM Maybe)
   describe "description" $ do
     it "should not reject" $
-      within (30 * 1000000) $ forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
-        forAll (genDecideInst decideConfig) $ \inst ->
+      forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
+        within (30 * 100000) $ forAll (genDecideInst decideConfig) $ \inst ->
           doesNotRefuse (description False inst :: LangM Maybe)
   describe "genDecideInst" $ do
     it "should pass verifyStatic" $
-      within (30 * 1000000) $ forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
-        forAll (genDecideInst decideConfig) $ \inst ->
+      forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
+        within (30 * 100000) $ forAll (genDecideInst decideConfig) $ \inst ->
           doesNotRefuse (verifyStatic inst :: LangM Maybe)
     it "should pass grading with correct answer" $
-      within (30 * 1000000) $ forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
-        forAll (genDecideInst decideConfig) $ \inst ->
+      forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
+        within (30 * 100000) $ forAll (genDecideInst decideConfig) $ \inst ->
           doesNotRefuse
             (partialGrade
               inst
@@ -73,21 +73,21 @@ spec = do
                 [ if i `elem` changed inst then Wrong else Correct
                 | i <- [1.. length $ getEntries $ getTable $ formula inst]] :: Rated Maybe)
     it "should generate an instance with the right amount of changed entries" $
-      within (30 * 1000000) $ forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
-        forAll (genDecideInst decideConfig) $ \DecideInst{..} ->
+      forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
+        within (30 * 100000) $ forAll (genDecideInst decideConfig) $ \DecideInst{..} ->
           let tableLen = length (getEntries (getTable formula))
               mistakeCount = max (tableLen * percentageOfChanged `div` 100) 1 in
           length changed == mistakeCount
     it "generated formula should depend on all atomics" $
-      within (30 * 1000000) $ forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
-        forAll (genDecideInst decideConfig) $ \DecideInst{..} ->
+      forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
+        within (30 * 100000) $ forAll (genDecideInst decideConfig) $ \DecideInst{..} ->
           formulaDependsOnAllAtoms formula
     it "the generated instance should pass verifyStatic" $
-      within (30 * 1000000) $ forAll validBoundsDecideConfig $ \decideConfig -> do
-        forAll (genDecideInst decideConfig) $ \decideInst ->
+      forAll validBoundsDecideConfig $ \decideConfig -> do
+        within (30 * 100000) $ forAll (genDecideInst decideConfig) $ \decideInst ->
           doesNotRefuse (verifyStatic decideInst :: LangM Maybe)
     it "should respect percentTrueEntries" $
-      within (30 * 1000000) $ forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
-        forAll (genDecideInst decideConfig) $ \DecideInst{..} ->
+      forAll validBoundsDecideConfig $ \decideConfig@DecideConfig{..} -> do
+        within (30 * 100000) $ forAll (genDecideInst decideConfig) $ \DecideInst{..} ->
           withRatio (fromMaybe (0, 100) percentTrueEntries) formula
 

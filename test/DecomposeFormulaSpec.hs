@@ -52,27 +52,27 @@ spec = do
         doesNotRefuse (checkDecomposeFormulaConfig decomposeFormulaConfig :: LangM Maybe)
   describe "description" $ do
     it "should not reject" $
-      within (30 * 1000000) $ forAll validBoundsDecomposeFormulaConfig $ \config -> do
-        forAll (generateDecomposeFormulaInst config) $ \inst ->
+      forAll validBoundsDecomposeFormulaConfig $ \config -> do
+        within (30 * 100000) $ forAll (generateDecomposeFormulaInst config) $ \inst ->
           doesNotRefuse (description inst :: LangM Maybe)
   describe "generateDecomposeFormulaInst" $ do
     it "the generated instance should pass verifyInst" $
-      within (30 * 1000000) $ forAll validBoundsDecomposeFormulaConfig $ \config -> do
-        forAll (generateDecomposeFormulaInst config) $ \inst ->
+      forAll validBoundsDecomposeFormulaConfig $ \config -> do
+        within (30 * 100000) $ forAll (generateDecomposeFormulaInst config) $ \inst ->
           doesNotRefuse (verifyInst inst :: LangM Maybe)
     it "should pass partialGrade with correct answer" $
-      within (30 * 1000000) $ forAll validBoundsDecomposeFormulaConfig $ \config@DecomposeFormulaConfig{..} -> do
-        forAll (generateDecomposeFormulaInst config) $ \inst ->
+      forAll validBoundsDecomposeFormulaConfig $ \config@DecomposeFormulaConfig{..} -> do
+        within (30 * 100000) $ forAll (generateDecomposeFormulaInst config) $ \inst ->
           doesNotRefuse (partialGrade' inst (TreeFormulaAnswer $ Just $ swapKids $ tree inst) :: LangM Maybe)
     it "should pass completeGrade with correct answer" $
-      within (30 * 1000000) $ forAll validBoundsDecomposeFormulaConfig $ \config@DecomposeFormulaConfig{..} -> do
-        forAll (generateDecomposeFormulaInst config) $ \inst ->
+      forAll validBoundsDecomposeFormulaConfig $ \config@DecomposeFormulaConfig{..} -> do
+        within (30 * 100000) $ forAll (generateDecomposeFormulaInst config) $ \inst ->
           ioProperty $
             withSystemTempDirectory "logic-tasks" $ \path ->
               doesNotRefuseIO (completeGrade' path inst (TreeFormulaAnswer $ Just $ swapKids $ tree inst))
     it "should generate an instance with different subtrees" $
-      within (30 * 1000000) $ forAll validBoundsDecomposeFormulaConfig $ \decomposeFormulaConfig ->
-        forAll (generateDecomposeFormulaInst decomposeFormulaConfig) $ \DecomposeFormulaInst{..} ->
+      forAll validBoundsDecomposeFormulaConfig $ \decomposeFormulaConfig ->
+        within (30 * 100000) $ forAll (generateDecomposeFormulaInst decomposeFormulaConfig) $ \DecomposeFormulaInst{..} ->
           let (lk,rk) = bothKids tree
               rootOp = fromJust $ binOp tree
           in notElem (display (Binary rootOp lk rk)) [display (Binary rootOp rk lk), reverse (display (Binary rootOp lk rk))]

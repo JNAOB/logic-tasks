@@ -46,62 +46,62 @@ spec = do
 
   describe "genLiteral" $ do
     it "should throw an error when called with the empty list" $
-      within (30 * 1000000) $ Exc.evaluate (genLiteral []) `shouldThrow` errorCall "Cannot construct literal from empty list."
+      within (30 * 100000) $ Exc.evaluate (genLiteral []) `shouldThrow` errorCall "Cannot construct literal from empty list."
     it "should generate a random literal from the given char list" $
-      within (30 * 1000000) $ property $ \chars -> not (null chars) ==> forAll (genLiteral chars) $ \char -> letter char `elem` chars
+      within (30 * 100000) $ property $ \chars -> not (null chars) ==> forAll (genLiteral chars) $ \char -> letter char `elem` chars
 
 
   describe "genClause" $ do
     it "should return the empty Clause when called with the empty list" $
-      within (30 * 1000000) $ property $ \bounds -> forAll (genClause bounds []) isEmptyClause
+      property $ \bounds -> within (30 * 100000) $ forAll (genClause bounds []) isEmptyClause
     it "should return the empty Clause when called with invalid boundaries" $
-      within (30 * 1000000) $ property $ \lower upper atoms -> lower <= 0 || upper < lower || lower > length atoms
-                   ==> forAll (genClause (lower,upper) atoms) isEmptyClause
+      property $ \lower upper atoms -> lower <= 0 || upper < lower || lower > length atoms
+                   ==> within (30 * 100000) $ forAll (genClause (lower,upper) atoms) isEmptyClause
     it "should generate a random clause of the correct length if given valid parameters" $
-      within (30 * 1000000) $ forAll validBoundsClause $ \((lower,upper),chars) -> forAll (genClause (lower,upper) chars) $ \clause ->
+      forAll validBoundsClause $ \((lower,upper),chars) -> within (30 * 100000) $ forAll (genClause (lower,upper) chars) $ \clause ->
         let numOfLiterals = length (literals clause) in numOfLiterals >= lower && numOfLiterals <= upper
 
 
   describe "genCnf" $ do
     it "should return the empty conjunction when called with the empty list" $
-      within (30 * 1000000) $ property $ \bounds1 bounds2 -> forAll (genCnf bounds1 bounds2 [] True) isEmptyCnf
+      property $ \bounds1 bounds2 -> within (30 * 100000) $ forAll (genCnf bounds1 bounds2 [] True) isEmptyCnf
     it "should generate a random cnf formula with a correct amount of clauses if given valid parameters" $
-      within (30 * 1000000) $ forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
-        forAll (genCnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \cnf' ->
+      forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
+        within (30 * 100000) $ forAll (genCnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \cnf' ->
           let
             num = length (getClauses cnf')
           in
             num >= lowerNum && num <= upperNum
     it "should generate a random cnf formula with the correct clause length if given valid parameters" $
-      within (30 * 1000000) $ forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
-        forAll (genCnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \cnf' ->
+      forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
+        within (30 * 100000) $ forAll (genCnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \cnf' ->
          let
            sizes = map (length . literals) (getClauses cnf')
          in
            maximum sizes <= upperLen && minimum sizes >= lowerLen
     it "should generate a random cnf formula containing all given atoms - or else an invariant assumed in LogicTasks.Util.usesAllAtoms becomes wrong" $ -- editorconfig-checker-disable-line
-      within (30 * 1000000) $ forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
-        forAll (genCnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \cnf' ->
+      forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
+        within (30 * 100000) $ forAll (genCnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \cnf' ->
           all (\c -> c `elem` atomics cnf') chars
 
   describe "genDnf" $ do
     it "should return the empty disjunction when called with the empty list" $
-      within (30 * 1000000) $ property $ \bounds1 bounds2 -> forAll (genDnf bounds1 bounds2 [] True) isEmptyDnf
+      property $ \bounds1 bounds2 -> within (30 * 100000) $ forAll (genDnf bounds1 bounds2 [] True) isEmptyDnf
     it "should generate a random dnf formula with a correct amount of cons if given valid parameters" $
-      within (30 * 1000000) $ forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
-        forAll (genDnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \dnf' ->
+      forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
+        within (30 * 100000) $ forAll (genDnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \dnf' ->
           let
             num = length (getConjunctions dnf')
           in
             num >= lowerNum && num <= upperNum
     it "should generate a random dnf formula with the correct con length if given valid parameters" $
-      within (30 * 1000000) $ forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
-        forAll (genDnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \dnf' ->
+      forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
+        within (30 * 100000) $ forAll (genDnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \dnf' ->
          let
            sizes = map (length . literals) (getConjunctions dnf')
          in
            maximum sizes <= upperLen && minimum sizes >= lowerLen
     it "should generate a random dnf formula containing all given atoms - or else an invariant assumed in LogicTasks.Util.usesAllAtoms becomes wrong" $ -- editorconfig-checker-disable-line
-      within (30 * 1000000) $ forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
-        forAll (genDnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \dnf' ->
+      forAll validBoundsNormalFormParams $ \((lowerNum,upperNum),(lowerLen,upperLen),chars) ->
+        within (30 * 100000) $ forAll (genDnf (lowerNum,upperNum) (lowerLen,upperLen) chars True) $ \dnf' ->
           all (\c -> c `elem` atomics dnf') chars

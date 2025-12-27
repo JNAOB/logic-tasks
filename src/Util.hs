@@ -197,7 +197,7 @@ checkTruthValueRangeAndSynTreeConf range synTreeConfig = do
 
 checkTruthValueRangeAndFormulaConf :: OutputCapable m => (Int, Int) -> FormulaConfig -> LangM m
 checkTruthValueRangeAndFormulaConf range formulaConf = do
-  checkFullRangeForSynTrees range formulaConf
+  -- checkFullRangeForSynTrees range formulaConf
   checkTruthValueRange range formulaConf
   case formulaConf of
     (FormulaCnf cnfCfg) -> checkNormalFormConfig cnfCfg

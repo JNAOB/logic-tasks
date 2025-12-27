@@ -57,38 +57,38 @@ spec = do
           doesNotRefuse (checkSubTreeConfig subTreeConfig :: LangM Maybe)
   describe "description" $ do
       it "should not reject" $
-       within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \config ->
-        forAll (generateSubTreeInst config) $ \inst ->
+       forAll validBoundsSubTreeConfig $ \config ->
+        within (30 * 100000) $ forAll (generateSubTreeInst config) $ \inst ->
             doesNotRefuse (description False inst :: LangM Maybe)
   describe "generateSubTreeInst" $ do
     it "parse should works well" $
-      within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \subTreeConfig ->
-        forAll (generateSubTreeInst subTreeConfig) $ \SubTreeInst{..} ->
+      forAll validBoundsSubTreeConfig $ \subTreeConfig ->
+        within (30 * 100000) $ forAll (generateSubTreeInst subTreeConfig) $ \SubTreeInst{..} ->
           let
             correctTrees = allNotLeafSubTrees tree
           in
             all (\tree -> parse (parser @(SynTree BinOp Char)) "" (display tree) == Right tree) correctTrees
     it "correct formulas are stored" $
-      within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \subTreeConfig ->
-        forAll (generateSubTreeInst subTreeConfig) $ \SubTreeInst{..} ->
+      forAll validBoundsSubTreeConfig $ \subTreeConfig ->
+        within (30 * 100000) $ forAll (generateSubTreeInst subTreeConfig) $ \SubTreeInst{..} ->
           let
             correctTrees' = allNotLeafSubTrees tree
           in
             correctTrees == correctTrees'
     it "it should generate not less Syntax Sub tree number it required as excepted" $
-      within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \config@SubTreeConfig {..} ->
-        forAll (generateSubTreeInst config) $ \SubTreeInst{..} ->
+      forAll validBoundsSubTreeConfig $ \config@SubTreeConfig {..} ->
+        within (30 * 100000) $ forAll (generateSubTreeInst config) $ \SubTreeInst{..} ->
           fromIntegral (size correctTrees) >= subTreeAmount
     it "all subformulas are the sublist of the formula" $
-      within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \config@SubTreeConfig {..} ->
-        forAll (generateSubTreeInst config) $ \SubTreeInst{..} ->
+      forAll validBoundsSubTreeConfig $ \config@SubTreeConfig {..} ->
+        within (30 * 100000) $ forAll (generateSubTreeInst config) $ \SubTreeInst{..} ->
           let
             correctFormulas = Data.Set.map display correctTrees
           in
             all (`isInfixOf` display tree) correctFormulas
     it "Converting correct subformulas Strings into formulas and parsing them again should yield the original" $
-      within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \config ->
-          forAll (generateSubTreeInst config) $ \SubTreeInst{..} ->
+      forAll validBoundsSubTreeConfig $ \config ->
+          within (30 * 100000) $ forAll (generateSubTreeInst config) $ \SubTreeInst{..} ->
             let
               correctFormulas = Data.Set.map display correctTrees
               propFormulas = Data.Set.map
@@ -98,8 +98,8 @@ spec = do
             in
               inputSet == correctFormulas
     xit "The above should be true even when deleting spaces in the input" $
-      within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \config ->
-        forAll (generateSubTreeInst config) $ \SubTreeInst{..} ->
+      forAll validBoundsSubTreeConfig $ \config ->
+        within (30 * 100000) $ forAll (generateSubTreeInst config) $ \SubTreeInst{..} ->
           let
             correctFormulas = Data.Set.map display correctTrees
             propFormulas = Data.Set.map
@@ -109,15 +109,15 @@ spec = do
           in
             inputSet == correctFormulas
     it "should pass verifyInst" $
-      within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \subTreeConfig ->
-        forAll (generateSubTreeInst subTreeConfig) $ \inst ->
+      forAll validBoundsSubTreeConfig $ \subTreeConfig ->
+        within (30 * 100000) $ forAll (generateSubTreeInst subTreeConfig) $ \inst ->
           doesNotRefuse (verifyInst inst :: LangM Maybe)
     it "should pass partialGrade" $
-      within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \subTreeConfig ->
-        forAll (generateSubTreeInst subTreeConfig) $ \inst@SubTreeInst{..} ->
+      forAll validBoundsSubTreeConfig $ \subTreeConfig ->
+        within (30 * 100000) $ forAll (generateSubTreeInst subTreeConfig) $ \inst@SubTreeInst{..} ->
           doesNotRefuse (partialGrade' inst (computeSolution inputTreeAmount $ toList correctTrees) :: LangM Maybe)
     it "should pass completeGrade" $
-      within (30 * 1000000) $ forAll validBoundsSubTreeConfig $ \subTreeConfig ->
-        forAll (generateSubTreeInst subTreeConfig) $ \inst@SubTreeInst{..} -> ioProperty $
+      forAll validBoundsSubTreeConfig $ \subTreeConfig ->
+        within (30 * 100000) $ forAll (generateSubTreeInst subTreeConfig) $ \inst@SubTreeInst{..} -> ioProperty $
             withSystemTempDirectory "logic-tasks" $ \path ->
               doesNotRefuseIO (completeGrade' path inst (computeSolution inputTreeAmount $ toList correctTrees))

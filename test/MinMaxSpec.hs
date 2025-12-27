@@ -48,37 +48,37 @@ spec = do
         doesNotRefuse (Min.verifyQuiz minMaxConfigConfig :: LangM Maybe)
   describe "description" $ do
     it "should not reject - Max" $
-      within (30 * 1000000) $ forAll validBoundsMinMaxConfig $ \config ->
-        forAll (Max.genMaxInst config) $ \inst ->
+      forAll validBoundsMinMaxConfig $ \config ->
+        within (30 * 100000) $ forAll (Max.genMaxInst config) $ \inst ->
           doesNotRefuse (Max.description inst :: LangM Maybe)
     it "should not reject - Min" $
-      within (30 * 1000000) $ forAll validBoundsMinMaxConfig $ \config ->
-        forAll (Min.genMinInst config) $ \inst ->
+      forAll validBoundsMinMaxConfig $ \config ->
+        within (30 * 100000) $ forAll (Min.genMinInst config) $ \inst ->
           doesNotRefuse (Min.description inst :: LangM Maybe)
   describe "generateInst" $ do
     it "should pass verifyStatic - Max" $
-      within (30 * 1000000) $ forAll validBoundsMinMaxConfig $ \config ->
-        forAll (Max.genMaxInst config) $ \inst ->
+      forAll validBoundsMinMaxConfig $ \config ->
+        within (30 * 100000) $ forAll (Max.genMaxInst config) $ \inst ->
           doesNotRefuse
             (Max.verifyStatic inst :: LangM Maybe)
     it "should pass verifyStatic - Min" $
-      within (30 * 1000000) $ forAll validBoundsMinMaxConfig $ \config ->
-        forAll (Min.genMinInst config) $ \inst ->
+      forAll validBoundsMinMaxConfig $ \config ->
+        within (30 * 100000) $ forAll (Min.genMinInst config) $ \inst ->
           doesNotRefuse
             (Min.verifyStatic inst :: LangM Maybe)
     xit "possible solution passes partialGrade - Max" $
-      within (30 * 1000000) $ forAll (Max.genMaxInst dMinMaxConf) $ \inst ->
+      forAll (Max.genMaxInst dMinMaxConf) $ \inst ->
         doesNotRefuse
           (Max.partialGrade' inst $ cnf inst :: LangM Maybe)
     xit "possible solution passes partialGrade - Min" $
-      within (30 * 1000000) $ forAll (Min.genMinInst dMinMaxConf) $ \inst ->
+      forAll (Min.genMinInst dMinMaxConf) $ \inst ->
         doesNotRefuse
           (Min.partialGrade' inst $ dnf inst :: LangM Maybe)
     xit "possible solution passes completeGrade - Max" $
-      within (30 * 1000000) $ forAll (Max.genMaxInst dMinMaxConf) $ \inst ->
+      forAll (Max.genMaxInst dMinMaxConf) $ \inst ->
         doesNotRefuse
           (Max.completeGrade' inst $ cnf inst :: LangM Maybe)
     xit "possible solution passes completeGrade - Min" $
-      within (30 * 1000000) $ forAll (Min.genMinInst dMinMaxConf) $ \inst ->
+      forAll (Min.genMinInst dMinMaxConf) $ \inst ->
         doesNotRefuse
           (Min.completeGrade' inst $ dnf inst :: LangM Maybe)

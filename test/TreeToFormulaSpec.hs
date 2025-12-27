@@ -37,23 +37,23 @@ spec = do
         doesNotRefuse (checkTreeToFormulaConfig config :: LangM Maybe)
   describe "description" $ do
     it "should not reject" $
-      within (30 * 1000000) $ forAll validBoundsTreeToFormulaConfig $ \config ->
-        forAll (generateTreeToFormulaInst config) $ \inst -> ioProperty $
+      forAll validBoundsTreeToFormulaConfig $ \config ->
+        within (30 * 100000) $ forAll (generateTreeToFormulaInst config) $ \inst -> ioProperty $
           withSystemTempDirectory "logic-tasks" $ \path ->
             doesNotRefuseIO (description path inst)
   describe "generateTreeToFormulaInst" $ do
     it "should pass verifyInst" $
-      within (30 * 1000000) $ forAll validBoundsTreeToFormulaConfig $ \config ->
-        forAll (generateTreeToFormulaInst config) $ \inst ->
+      forAll validBoundsTreeToFormulaConfig $ \config ->
+        within (30 * 100000) $ forAll (generateTreeToFormulaInst config) $ \inst ->
           doesNotRefuse
             (verifyInst inst :: LangM Maybe)
     it "possible solution passes partialGrade" $
-      within (30 * 1000000) $ forAll validBoundsTreeToFormulaConfig $ \config ->
-        forAll (generateTreeToFormulaInst config) $ \inst ->
+      forAll validBoundsTreeToFormulaConfig $ \config ->
+        within (30 * 100000) $ forAll (generateTreeToFormulaInst config) $ \inst ->
           doesNotRefuse
             (partialGrade' inst $ TreeFormulaAnswer (Just $ tree inst) :: LangM Maybe)
     it "possible solution passes completeGrade" $
-      within (30 * 1000000) $ forAll validBoundsTreeToFormulaConfig $ \config ->
-        forAll (generateTreeToFormulaInst config) $ \inst -> ioProperty $
+      forAll validBoundsTreeToFormulaConfig $ \config ->
+        within (30 * 100000) $ forAll (generateTreeToFormulaInst config) $ \inst -> ioProperty $
           withSystemTempDirectory "logic-tasks" $ \path ->
             doesNotRefuseIO (completeGrade' path inst $ TreeFormulaAnswer (Just $ tree inst))

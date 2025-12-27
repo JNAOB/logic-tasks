@@ -59,33 +59,33 @@ spec = do
         doesNotRefuse (verifyQuiz pickConfig :: LangM Maybe)
   describe "description" $ do
     it "should not reject" $
-      within (30 * 1000000) $ forAll validBoundsPickConfig $ \pickConfig@PickConfig{..} ->
-        forAll (genPickInst pickConfig) $ \inst ->
+      forAll validBoundsPickConfig $ \pickConfig@PickConfig{..} ->
+        within (30 * 100000) $ forAll (genPickInst pickConfig) $ \inst ->
           doesNotRefuse (description False inst :: LangM Maybe)
   describe "genPickInst" $ do
     it "generated formulas should not be semantically equivalent" $
-      within (30 * 1000000) $ forAll validBoundsPickConfig $ \pickConfig@PickConfig{..} ->
-        forAll (genPickInst pickConfig) $ \PickInst{..} ->
+      forAll validBoundsPickConfig $ \pickConfig@PickConfig{..} ->
+        within (30 * 100000) $ forAll (genPickInst pickConfig) $ \PickInst{..} ->
           length (nubBy isSemanticEqual formulas) == amountOfOptions
     it "generated formulas should only consist of the same atomics" $
-      within (30 * 1000000) $ forAll validBoundsPickConfig $ \pickConfig ->
-        forAll (genPickInst pickConfig) $ \PickInst{..} ->
+      forAll validBoundsPickConfig $ \pickConfig ->
+        within (30 * 100000) $ forAll (genPickInst pickConfig) $ \PickInst{..} ->
           length (nubOrd (map (nubSort . atomics) formulas)) == 1
     it "generated formulas should depend on all atomics" $
-      within (30 * 1000000) $ forAll validBoundsPickConfig $ \pickConfig ->
-        forAll (genPickInst pickConfig) $ \PickInst{..} ->
+      forAll validBoundsPickConfig $ \pickConfig ->
+        within (30 * 100000) $ forAll (genPickInst pickConfig) $ \PickInst{..} ->
           all formulaDependsOnAllAtoms formulas
     it "the generated instance should pass verifyStatic" $
-      within (30 * 1000000) $ forAll validBoundsPickConfig $ \pickConfig -> do
-        forAll (genPickInst pickConfig) $ \pickInst ->
+      forAll validBoundsPickConfig $ \pickConfig -> do
+        within (30 * 100000) $ forAll (genPickInst pickConfig) $ \pickInst ->
           doesNotRefuse (verifyStatic pickInst :: LangM Maybe)
     it "should respect percentTrueEntries" $
-      within (30 * 1000000) $ forAll validBoundsPickConfig $ \pickConfig@PickConfig{..} ->
-        forAll (genPickInst pickConfig) $ \PickInst{..} ->
+      forAll validBoundsPickConfig $ \pickConfig@PickConfig{..} ->
+        within (30 * 100000) $ forAll (genPickInst pickConfig) $ \PickInst{..} ->
           all (withRatio (fromMaybe (0, 100) percentTrueEntries)) formulas
     it "the generated solution should pass grading" $
-      within (30 * 1000000) $ forAll validBoundsPickConfig $ \pickConfig@PickConfig{..} ->
-        forAll (genPickInst pickConfig) $ \inst ->
+      forAll validBoundsPickConfig $ \pickConfig@PickConfig{..} ->
+        within (30 * 100000) $ forAll (genPickInst pickConfig) $ \inst ->
           doesNotRefuse (partialGrade inst (Number $ Just $ correct inst)  :: LangM Maybe) &&
           doesNotRefuse (completeGrade inst (Number $ Just $ correct inst)  :: LangM Maybe)
 
