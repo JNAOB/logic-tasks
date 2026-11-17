@@ -78,7 +78,7 @@ validateSettings
             "wie in spirit bereits enthalten sind."
     | (atomics \\ ['A' .. 'L']) /= [] = refuse $ indent $ text $
         "Es dürfen nur Buchstaben aus dem Intervall ['A' .. 'L'], " ++
-            "für die atomaren Aussagen verwendet werden."
+            "für die atomaren Formeln verwendet werden."
     | otherwise = pure ()
 
 
@@ -267,12 +267,12 @@ checkSemantics _ TaskData{solution = Solution{..},..} Submission{..} = do
         clauses = getClauses formula
         allAtomics = sort $ getAllAtomics clauses
     checking ((sort (concat marked) \\\\ allAtomics) /= []) $ do
-        german $ "Hinweis: Markiert werden können nur jene atomare Aussagen, " ++
+        german $ "Hinweis: Markiert werden können nur jene atomare Formeln, " ++
             "welche in der Formel vorkommen und nicht bereits markiert worden sind."
-        english "Hint: Only those atomic propositions that occur in the formula and are not yet marked can be marked."
+        english "Hint: Only those atomic formulas that occur in the formula and are not yet marked can be marked."
     checking (any ((> 1) . length) (drop 1 marked)) $ do
-        german "Hinweis: Mit Ausnahme von Schritt 1, darf immer nur eine Aussage pro Schritt markiert werden."
-        english "Hint: Apart from step 1, exactly one proposition may be marked in each step."
+        german "Hinweis: Mit Ausnahme von Schritt 1, darf immer nur eine atomare Formel pro Schritt markiert werden."
+        english "Hint: Apart from step 1, exactly one atomic formula may be marked in each step."
     checking ((\\case
         (Just step : _) -> sort (getFacts clauses) /= sort (unCharAnswer step)
         _               -> False) steps) $ do
@@ -333,8 +333,8 @@ description _ TaskData{..} = do
         english "Use the following notations:"
         german "Beachten Sie die folgenden Schreibweisen:"
     indent $ translate $ do
-        english "Example of a listing of the propositions marked in a step:"
-        german "Beispiel für die Angabe der in einem Schritt markierten Aussagen:"
+        english "Example of a listing of the atomic formulas marked in a step:"
+        german "Beispiel für die Angabe der in einem Schritt markierten atomaren Formeln:"
     code "A, B"
     indent $ translate $ do
         english "Example of a Model:"

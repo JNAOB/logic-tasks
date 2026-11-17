@@ -231,7 +231,7 @@ feedbackCompareChosenLiars allocationFromLiars wrongLiar = do
 checkSyntax :: OutputCapable m => TaskData -> Submission -> LangM m
 checkSyntax TaskData{..} Submission{..} = do
   assertion (all (all (`elem` ['A','B','C']) . atomics) (submittedFormula : submittedParts)) $ text
-    "Alle angegebenen Formeln enthalten nur die bekannten atomaren Aussagen A, B und C?"
+    "Alle angegebenen Formeln enthalten nur die bekannten atomaren Formeln A, B und C?"
   when (nubOrd atomicRows /= atomicRows) $
     refuse $ indent $ text $
       "Mindestens eine Belegung kommt in der Wahrheitstafel mehrfach vor. " ++
