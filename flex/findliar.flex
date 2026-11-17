@@ -1,4 +1,3 @@
-
 taskName: FindLiar
 validation: Validate
 =============================================
@@ -348,7 +347,7 @@ description _ TaskData{..} = do
     ("Übersetzen Sie die Hinweise und die Kombination dieser jeweils in eine aussagenlogische Formel. " ++
       "Geben Sie die Formeln in die entsprechend benannten Textfelder ein.")
   paragraph $ text
-    ("Wer lügt? Leiten Sie Ihr Ergebnis mittels Wahrheitstafel her. " ++
+    ("Wer lügt? Leiten Sie Ihr Ergebnis mittels (aufsteigend geordneter) Wahrheitstafel her. " ++
       "Füllen Sie dabei alle benannten Spalten vollständig aus. " ++
       "Sie können Hilfsspalten verwenden. Kreuzen Sie anschließend die entsprechenden Namen an.")
   paragraph $ text
