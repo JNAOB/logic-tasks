@@ -8,7 +8,7 @@ module LogicTasks.Syntax.DecomposeFormula where
 import Capabilities.Cache (MonadCache)
 import Capabilities.LatexSvg (MonadLatexSvg)
 import Control.OutputCapable.Blocks (
-  GenericOutputCapable (paragraph, indent, translatedCode, refuse, image),
+  GenericOutputCapable (paragraph, translatedCode, refuse, image),
   LangM,
   OutputCapable,
   extra,
@@ -65,7 +65,7 @@ description DecomposeFormulaInst{..} = do
         pure()
       )
 
-    paragraph $ indent $ do
+    paragraph $ do
       translate $ do
         english "A solution attempt could look like this: "
         german "Ein Lösungsversuch könnte beispielsweise so aussehen: "
