@@ -30,6 +30,7 @@ spec = do
         , isRight $ parse (parser @Cnf) "" "- D"
         , isRight $ parse (parser @Cnf) "" "nicht E"
         , isRight $ parse (parser @Cnf) "" "not F"
+        , isRight $ parse (parser @Cnf) "" "￢ G"
         ]
   describe "parser @Cnf" $ do
     it "correctly recognizes all different notations" $

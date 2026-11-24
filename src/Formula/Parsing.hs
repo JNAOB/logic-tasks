@@ -295,7 +295,7 @@ instance Parse PrologLiteral where
         between (tokenSymbol "(") (tokenSymbol ")") (atomParse False)
 
       operatorNeg = do
-        tokenSymbol "¬" <|> tokenSymbol "~" <|> tokenSymbol "-"
+        tokenSymbol "¬" <|> tokenSymbol "~" <|> tokenSymbol "-" <|> tokenSymbol "￢"
         atomParse False
 
       posLit = atomParse True

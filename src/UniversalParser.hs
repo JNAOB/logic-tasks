@@ -161,13 +161,13 @@ backImplicationParser = token (void (string "<=") <* notFollowedBy (char '>')) <
 biImplicationParser :: Parser ()
 biImplicationParser =
       tokenSymbol "<=>"
-  <|> keyword "iff" <|> keyword "gdw"
+  <|> keyword "iff" <|> keyword "gdw" <|> keyword "⇔"
   <?> "BiImplication"
 
 negationParser :: Parser ()
 negationParser =
       keyword "not" <|> keyword "nicht"
-  <|> tokenSymbol "¬" <|> tokenSymbol "~" <|> tokenSymbol "-"
+  <|> tokenSymbol "¬" <|> tokenSymbol "~" <|> tokenSymbol "-" <|> tokenSymbol "￢"
   <?> "Negation"
 
 atomParser :: Parser Char
